@@ -1,20 +1,18 @@
 name: Build OpenWrt K2T Firmware
 
 on:
-  # 允许手动触发构建
   workflow_dispatch:
-  # 每次推送到 main 分支时也会触发
   push:
     branches:
       - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # 使用 GitHub 的 Ubuntu 系统构建
+    runs-on: ubuntu-20.04  # 更改为 Ubuntu 20.04 以避免此问题
 
     steps:
     - name: Checkout OpenWrt source
-      uses: actions/checkout@v3  # 克隆代码库
+      uses: actions/checkout@v3
 
     - name: Install dependencies
       run: |
@@ -31,14 +29,14 @@ jobs:
 
     - name: Load config
       run: |
-        [ -e .config ] && echo "Using provided .config" || make defconfig  # 使用你提供的 .config
+        [ -e .config ] && echo "Using provided .config" || make defconfig
 
     - name: Compile firmware
       run: |
-        make -j$(nproc) V=s  # 使用所有 CPU 核心进行编译
+        make -j$(nproc) V=s
 
     - name: Upload firmware
-      uses: actions/upload-artifact@v4  # 更新为 v4 版本
+      uses: actions/upload-artifact@v4
       with:
         name: K2T-Firmware
         path: bin/targets/
